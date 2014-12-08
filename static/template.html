@@ -3,10 +3,15 @@
 
     <head>
         <title>
-            {title}
+            {{title}}
         </title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" media="all" href="{css}" />
+        {{#if highlight}}
+            {{!-- ./monokai.css --}}
+            <link rel="stylesheet" href="{{hCss}}">
+        {{/if}}
+        <link rel="stylesheet" media="all" href="{{css}}" />
+
     </head>
 
     <body>
@@ -18,45 +23,69 @@
                     <tr>
                         <th class="docs">
                             <h1>
-                                {title}
+                                {{title}}
                             </h1>
                         </th>
-                        <th class="code">
+                        <th class="hljs" style="height:100%">
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                  {#entries}
-                    <tr id="section-{@idx}{.}{/idx}">
+                  {{#each entries}}
+                    {{!--
+                        tags Array
+                        description Object (full, summary, body)
+                        isPrivate boolean
+                        ignore boolean
+                        code string
+                        ctx ?
+                     --}}
+                    <tr id="section-{{@index}}">
                         <td class="docs">
                             <div class="pilwrap">
-                                <a class="pilcrow" href="#section-{@idx}{.}{/idx}">&#182;</a>
+                                <a class="pilcrow" href="#section-{{@index}}">&#182;</a>
                             </div>
-                            {description.full|s}
-                            {?tags}
+                            {{{description.full}}}
+                            {{#if tags}}
                             <table class="tags">
                                 <tbody>
-                                {#tags}
+                                {{#each tags}}
                                     <tr>
-                                    <td><small><strong>@{type}</strong>{#types} [{.}]{/types} </small></td><td><strong>{name}</strong></td><td>{description}</td>
+                                        <td>
+                                            <small>
+                                                <strong>@{{type}}</strong>
+                                                {{#each types}}
+                                                    {{this}}
+                                                {{/each}}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <strong>{{name}}</strong>
+                                        </td>
+                                        <td>
+                                            {{description}}
+                                            {{string}}
+                                        </td>
                                     </tr>
-                                {/tags}
+                                {{/each}}
                                 </tbody>
                             </table>
-                            {/tags}
+                            {{/if}}
                         </td>
-                        <td class="code">
-                            <div class="highlight">
-                                <pre lang="javascript">
-                                  {code|s}
-                                </pre>
-                            </div>
+                        <td class="hljs">
+                            <pre>
+                                <code class="javascript">{{{code}}}</code>
+                            </pre>
                         </td>
                     </tr>
-                  {/entries}
+                  {{/each}}
                 </tbody>
             </table>
         </div>
+        {{#if highlight}}
+            {{!-- ./highlight.pack.js --}}
+            <script src="{{hJs}}"></script>
+            <script>hljs.initHighlightingOnLoad();</script>
+        {{/if}}
     </body>
-
 </html>
